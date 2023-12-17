@@ -1,9 +1,7 @@
 ##### Synthetic Data Generator
 _by Jake S._
 
-This Streamlit application is designed to create realistic, synthetic data for Salesforce objects, aiding in development, testing, and training without using real customer data. Data is generated using the Python library **Faker**: https://faker.readthedocs.io/en/master/
-
-Application Repo: https://github.com/jake-data-clymer/data_gen
+This Streamlit application is designed to create realistic, synthetic data for Salesforce objects, aiding in development, testing, and training without using real customer data. 
 
 ##### How It Works
 
@@ -19,3 +17,8 @@ Application Repo: https://github.com/jake-data-clymer/data_gen
 
 **Download Files:**
 - After generation, scroll to the bottom of the application to download the objects as zipped CSV files.
+
+**Links**
+- **Salesforce Object Reference**: https://developer.salesforce.com/docs/atlas.en-us.246.0.object_reference.meta/object_reference/sforce_api_objects_list.htm
+- **Faker**: https://faker.readthedocs.io/en/master/
+- **Application Repo**: https://github.com/jake-data-clymer/data_gen
