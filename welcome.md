@@ -18,7 +18,7 @@ This Streamlit application is designed to create realistic, synthetic data for S
 **Download Files:**
 - After generation, scroll to the bottom of the application to download the objects as zipped CSV files.
 
-**Links**
-- **Salesforce Object Reference**: https://developer.salesforce.com/docs/atlas.en-us.246.0.object_reference.meta/object_reference/sforce_api_objects_list.htm
-- **Faker**: https://faker.readthedocs.io/en/master/
-- **Application Repo**: https://github.com/jake-data-clymer/data_gen
+**Learn More**
+- [Github Repo](https://github.com/jake-data-clymer/data_gen)
+- [Salesforce Object Reference](https://developer.salesforce.com/docs/atlas.en-us.246.0.object_reference.meta/object_reference/sforce_api_objects_list.htm)
+- [Faker](https://faker.readthedocs.io/en/master/)
