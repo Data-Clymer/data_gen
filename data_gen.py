@@ -1,56 +1,123 @@
 import streamlit as st
-import csv
+import pandas as pd
+import datetime
 import io
+import zipfile
 
 import faker_sf
+from gen_classes import FakeDataGenerator
 
-st.set_page_config(page_title="Synthetic Data Generator", page_icon="🧊")
+st.set_page_config(page_title='Synthetic Data Generator', page_icon='🧊')
 
-def convert_to_csv_string(file):
-    output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=file[0].keys())
-    writer.writeheader()
-    for opportunity in file:
-        writer.writerow(opportunity)
-    return output.getvalue()
+def generate_data(object_type, num_records, account_ids=None, opportunity_ids=None, quote_ids=None):
+    fake_data_generator = FakeDataGenerator()
+    data = []
+    for _ in range(num_records):
+        if object_type == 'SFDC Account':
+            data.append(fake_data_generator.generate_salesforce_account())
+        elif object_type == 'SFDC Opportunity':
+            data.append(fake_data_generator.generate_salesforce_opportunity(account_ids))
+        elif object_type == 'SFDC User':
+            data.append(fake_data_generator.generate_salesforce_user(account_ids))
+        elif object_type == 'SFDC Quote':
+            data.append(fake_data_generator.generate_salesforce_quote(account_ids, opportunity_ids))
+        elif object_type == 'SFDC Order':
+            data.append(fake_data_generator.generate_salesforce_order(account_ids, opportunity_ids, quote_ids))
+    return pd.DataFrame(data)
+
+def create_zip_download_button(download_items, record_count):
+    zip_buffer = io.BytesIO()
+    current_time = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    
+    with zipfile.ZipFile(zip_buffer, 'w') as zip_file:
+        for object_name, df in download_items.items():
+            if not df.empty:
+                csv_string = df.to_csv(index=False).encode('utf-8')
+                
+                # Format the file name: replace spaces with underscores, convert to lowercase, and add timestamp
+                formatted_object_name = object_name.replace(" ", "_").lower()
+                file_name = f"{formatted_object_name}_{record_count}_records_{current_time}.csv"
+                
+                zip_file.writestr(file_name, csv_string)
+    # Set the position of the buffer to the start
+    zip_buffer.seek(0)
+    
+    # Create Streamlit download button object
+    st.download_button(
+        label="Download All Files (ZIP CSVs)",
+        data=zip_buffer,
+        file_name=f"sfdc_objects_{current_time}.zip",
+        mime="application/zip"
+    )
 
 def main():
-    st.title("Synthetic Data Generator")
+    st.title('Synthetic Data Generator')
     '---'
+    with st.expander("**Application Details**", expanded=False):
 
-    # Initializing account session state object
-    if 'account_state' not in st.session_state:
-        st.session_state['account_state'] = None
+        with open('welcome.md', 'r') as file:
+            markdown_text = file.read()
 
+        st.markdown(markdown_text, unsafe_allow_html=True)
+        
     # User inputs
-    object_type = st.selectbox("Select Object Type", ["SFDC Account","SFDC Opportunity"], index=0)
-    record_count = st.number_input("Number of Records", min_value=1, max_value=1000, value=100)
+    record_count = st.number_input('Number of Records to Generate:', min_value=1, max_value=10000, value=10)
+    
+    objects = st.multiselect(
+        'Select Objects to Generate',
+        ['SFDC Account', 'SFDC User', 'SFDC Quote', 'SFDC Order', 'SFDC Opportunity'],
+        default=['SFDC Account']
+    )
+    
+    # Generate button
+    if st.button('Generate Data'):
+    
+        account_ids = []
+        opportunity_ids = []
+        quote_ids = []
+        
+        download_items = {}
+    
+        if 'SFDC Account' in objects:
+            account_data = [faker_sf.generate_salesforce_account() for _ in range(record_count)]
+            account_ids = [acc['id'] for acc in account_data]
+            account_df = pd.DataFrame(account_data)
+            download_items['SFDC Account'] = account_df
+            st.write('SDFC Account(s)')
+            st.dataframe(account_df)
 
-    # Generate data button
-    if st.button("Generate Data"):
-        if object_type == "SFDC Account":
-            st.session_state['account_state'] = None
-            accounts = [faker_sf.generate_account() for _ in range(record_count)]
-            account_ids = [acc["id"] for acc in accounts]
-            st.session_state['account_state'] = account_ids
-            st.dataframe(accounts)
-            csv_string = convert_to_csv_string(accounts)
-            st.download_button(
-                label="Download CSV",
-                data=csv_string,
-                file_name="salesforce_account.csv",
-                mime="text/csv"
-            )
-        if object_type == "SFDC Opportunity":
-            opportunities = [faker_sf.generate_opportunity(st.session_state['account_state']) for _ in range(record_count)]
-            st.dataframe(opportunities)
-            csv_string = convert_to_csv_string(opportunities)
-            st.download_button(
-                label="Download CSV",
-                data=csv_string,
-                file_name="salesforce_opportunity.csv",
-                mime="text/csv"
-            )
+        if 'SFDC Opportunity' in objects:
+            opportunity_data = [faker_sf.generate_salesforce_opportunity(account_ids) for _ in range(record_count)]
+            opportunity_ids = [opp['id'] for opp in opportunity_data]
+            opportunity_df = pd.DataFrame(opportunity_data)
+            download_items['SFDC Opportunity'] = opportunity_df
+            st.write('SDFC Opportunity(ies)')
+            st.dataframe(opportunity_df)
+            
+        if 'SFDC User' in objects:
+            user_data = [faker_sf.generate_salesforce_user(account_ids) for _ in range(record_count)]
+            user_df = pd.DataFrame(user_data)
+            download_items['SFDC User'] = user_df
+            st.write('SDFC User(s)')
+            st.dataframe(user_df)
+            
+        if 'SFDC Quote' in objects:
+            quote_data = [faker_sf.generate_salesforce_quote(account_ids, opportunity_ids) for _ in range(record_count)]
+            quote_ids = [qt['id'] for qt in quote_data]
+            quote_df = pd.DataFrame(quote_data)
+            download_items['SFDC Quote'] = quote_df
+            st.write('SDFC Quote(s)')
+            st.dataframe(quote_df)
+            
+        if 'SFDC Order' in objects:
+            order_data = [faker_sf.generate_salesforce_order(account_ids, opportunity_ids, quote_ids) for _ in range(record_count)]
+            order_df = pd.DataFrame(order_data)
+            download_items['SFDC order'] = order_df
+            st.write('SDFC Order(s)')
+            st.dataframe(order_df)
+            
+        # Download button 
+        create_zip_download_button(download_items, record_count)
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
