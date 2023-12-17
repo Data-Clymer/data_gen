@@ -4,26 +4,9 @@ import datetime
 import io
 import zipfile
 
-import faker_sf
 from gen_classes import FakeDataGenerator
 
 st.set_page_config(page_title='Synthetic Data Generator', page_icon='🧊')
-
-def generate_data(object_type, num_records, account_ids=None, opportunity_ids=None, quote_ids=None):
-    fake_data_generator = FakeDataGenerator()
-    data = []
-    for _ in range(num_records):
-        if object_type == 'SFDC Account':
-            data.append(fake_data_generator.generate_salesforce_account())
-        elif object_type == 'SFDC Opportunity':
-            data.append(fake_data_generator.generate_salesforce_opportunity(account_ids))
-        elif object_type == 'SFDC User':
-            data.append(fake_data_generator.generate_salesforce_user(account_ids))
-        elif object_type == 'SFDC Quote':
-            data.append(fake_data_generator.generate_salesforce_quote(account_ids, opportunity_ids))
-        elif object_type == 'SFDC Order':
-            data.append(fake_data_generator.generate_salesforce_order(account_ids, opportunity_ids, quote_ids))
-    return pd.DataFrame(data)
 
 def create_zip_download_button(download_items, record_count):
     zip_buffer = io.BytesIO()
@@ -77,9 +60,10 @@ def main():
         quote_ids = []
         
         download_items = {}
+        fake_data_generator = FakeDataGenerator()
     
         if 'SFDC Account' in objects:
-            account_data = [faker_sf.generate_salesforce_account() for _ in range(record_count)]
+            account_data = [fake_data_generator.generate_salesforce_account() for _ in range(record_count)]
             account_ids = [acc['id'] for acc in account_data]
             account_df = pd.DataFrame(account_data)
             download_items['SFDC Account'] = account_df
@@ -87,7 +71,7 @@ def main():
             st.dataframe(account_df)
 
         if 'SFDC Opportunity' in objects:
-            opportunity_data = [faker_sf.generate_salesforce_opportunity(account_ids) for _ in range(record_count)]
+            opportunity_data = [fake_data_generator.generate_salesforce_opportunity(account_ids) for _ in range(record_count)]
             opportunity_ids = [opp['id'] for opp in opportunity_data]
             opportunity_df = pd.DataFrame(opportunity_data)
             download_items['SFDC Opportunity'] = opportunity_df
@@ -95,14 +79,14 @@ def main():
             st.dataframe(opportunity_df)
             
         if 'SFDC User' in objects:
-            user_data = [faker_sf.generate_salesforce_user(account_ids) for _ in range(record_count)]
+            user_data = [fake_data_generator.generate_salesforce_user(account_ids) for _ in range(record_count)]
             user_df = pd.DataFrame(user_data)
             download_items['SFDC User'] = user_df
             st.write('SDFC User(s)')
             st.dataframe(user_df)
             
         if 'SFDC Quote' in objects:
-            quote_data = [faker_sf.generate_salesforce_quote(account_ids, opportunity_ids) for _ in range(record_count)]
+            quote_data = [fake_data_generator.generate_salesforce_quote(account_ids, opportunity_ids) for _ in range(record_count)]
             quote_ids = [qt['id'] for qt in quote_data]
             quote_df = pd.DataFrame(quote_data)
             download_items['SFDC Quote'] = quote_df
@@ -110,7 +94,7 @@ def main():
             st.dataframe(quote_df)
             
         if 'SFDC Order' in objects:
-            order_data = [faker_sf.generate_salesforce_order(account_ids, opportunity_ids, quote_ids) for _ in range(record_count)]
+            order_data = [fake_data_generator.generate_salesforce_order(account_ids, opportunity_ids, quote_ids) for _ in range(record_count)]
             order_df = pd.DataFrame(order_data)
             download_items['SFDC order'] = order_df
             st.write('SDFC Order(s)')
