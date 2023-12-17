@@ -3,6 +3,8 @@ _by Jake S._
 
 This Streamlit application is designed to create realistic, synthetic data for Salesforce objects, aiding in development, testing, and training without using real customer data. Data is generated using the Python library **Faker**: https://faker.readthedocs.io/en/master/
 
+Application Repo: https://github.com/jake-data-clymer/data_gen
+
 ##### How It Works
 
 **Select Salesforce Objects:**
