@@ -3,7 +3,6 @@ import pandas as pd
 import datetime
 import io
 import zipfile
-
 from gen_classes import FakeDataGenerator
 
 st.set_page_config(page_title='Synthetic Data Generator', page_icon='🧊')
@@ -38,20 +37,20 @@ def main():
     '---'
     with st.expander("**Application Details**", expanded=False):
 
-        with open('welcome.md', 'r') as file:
+        with open('details.md', 'r') as file:
             markdown_text = file.read()
 
         st.markdown(markdown_text, unsafe_allow_html=True)
         
     # User inputs
-    record_count = st.number_input('Number of Records to Generate:', min_value=1, max_value=10000, value=10)
-    
     objects = st.multiselect(
         'Select Objects to Generate',
         ['SFDC Account', 'SFDC User', 'SFDC Quote', 'SFDC Order', 'SFDC Opportunity'],
         default=['SFDC Account']
     )
     
+    record_count = st.number_input('Number of Records to Generate:', min_value=1, max_value=10000, value=10)
+        
     # Generate button
     if st.button('Generate Data'):
     
