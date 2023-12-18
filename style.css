@@ -1,0 +1,12 @@
+.main .block-container {
+    background-color: white;
+    padding: 2rem;
+    border-collapse: separate; 
+    border-radius: 5px 5px 5px 5px;
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+}
+
+h1 {
+    text-align: center;
+}

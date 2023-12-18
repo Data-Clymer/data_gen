@@ -36,6 +36,7 @@ def main():
     st.image('assets/data-clymer-logo_horizontal.png')
     '---'
     st.title('Synthetic Data Generator')
+    '   '
     with st.expander("**Application Details**", expanded=False):
 
         with open('details.md', 'r') as file:
@@ -104,6 +105,11 @@ def main():
             
         # Download button
         create_zip_download_button(download_items, record_count)
-
+        
+def local_css(file_name):
+    with open(file_name, "r") as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+        
+local_css("style.css")
 if __name__ == '__main__':
     main()

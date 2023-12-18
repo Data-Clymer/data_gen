@@ -1,7 +1,7 @@
 [theme]
-base="light"
-primaryColor="#022b73"
-secondaryBackgroundColor="#b9d2ff"
+primaryColor="#001841"
+backgroundColor="#e7eeff"
+secondaryBackgroundColor="#bed9ff"
 textColor="#000000"
 
 [client]
