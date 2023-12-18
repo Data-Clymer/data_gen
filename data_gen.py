@@ -39,7 +39,7 @@ def main():
     '   '
     with st.expander("**Application Details**", expanded=False):
 
-        with open('details.md', 'r') as file:
+        with open('assets/details.md', 'r') as file:
             markdown_text = file.read()
 
         st.markdown(markdown_text, unsafe_allow_html=True)
