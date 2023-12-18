@@ -1,5 +1,5 @@
 ##### Synthetic Data Generator
-_by Jake S._
+_by [Data Clymer](https://dataclymer.com/)_
 
 This Streamlit application is designed to create realistic, synthetic data for Salesforce objects, aiding in development, testing, and training without using real customer data. 
 

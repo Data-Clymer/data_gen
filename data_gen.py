@@ -33,8 +33,9 @@ def create_zip_download_button(download_items, record_count):
     )
 
 def main():
-    st.title('Synthetic Data Generator')
+    st.image('assets/data-clymer-logo_horizontal.png')
     '---'
+    st.title('Synthetic Data Generator')
     with st.expander("**Application Details**", expanded=False):
 
         with open('details.md', 'r') as file:
@@ -59,6 +60,8 @@ def main():
         quote_ids = []
         
         download_items = {}
+
+        # Instaniate fake data class
         fake_data_generator = FakeDataGenerator()
     
         if 'SFDC Account' in objects:
@@ -99,7 +102,7 @@ def main():
             st.write('SDFC Order(s)')
             st.dataframe(order_df)
             
-        # Download button 
+        # Download button
         create_zip_download_button(download_items, record_count)
 
 if __name__ == '__main__':
